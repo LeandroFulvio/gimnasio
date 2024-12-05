@@ -15,6 +15,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "final---progra-iii": "file:",
-    "mongodb": "^6.10.0"
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.8.2"
   }
 }
