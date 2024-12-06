@@ -1,22 +1,22 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-// import HomeRecord from './HomeRecord'
-// import EditRecord from './EditRecord';
 import Home from './Home';
 
 function App() {
 
   return (
     <Router>
-      <div className="App">
-        <Routes>
-          {/* Definir rutas para las pantallas */}
-          {/* <Route exact path="/" element={<HomeRecord />} />
-          <Route path="/edit/:id" element={<EditRecord />} /> */
-          <Route path="/" element={<Home />} />
-          }
-        </Routes>
+    <div className="container-fluid">
+      <div className="container">
+        <div className="row">
+          <div className="col-12">
+            <Routes>
+              <Route path="/" element={<Home />} />
+            </Routes>
+          </div>
+        </div>
       </div>
-    </Router>  
+    </div>
+  </Router>
   )
 }
 

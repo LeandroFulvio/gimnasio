@@ -10,14 +10,18 @@ function Home() {
   };
 
   return (
-    <div>
-      <nav className="navbar navbar-dark bg-primary">
+    <div className="container p-0">
+      <nav className="navbar navbar-dark bg-primary mb-4">
         <div className="container">
           <span className="navbar-brand mb-0 h1">Gestión de Gimnasio</span>
         </div>
       </nav>
-      <CreateSocio onSuccess={handleSocioCreated} />
-      <SocioList trigger={updateTrigger} />
+      <div className="row">
+        <div className="col-12">
+          <CreateSocio onSuccess={handleSocioCreated} />
+          <SocioList trigger={updateTrigger} />
+        </div>
+      </div>
     </div>
   );
 }

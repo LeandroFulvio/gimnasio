@@ -1,4 +1,3 @@
-//Pagos
 import mongoose from 'mongoose';
 
 const paySchema = new mongoose.Schema({
