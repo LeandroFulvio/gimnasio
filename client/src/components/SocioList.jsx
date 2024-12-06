@@ -1,18 +1,15 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import PaymentManager from './PaymentManager';
+
+import SocioEditForm from './SocioEditForm';
 
 function SocioList({ trigger }) {
   const [socios, setSocios] = useState([]);
 
   //For edit
   const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({
-    name: '',
-    dni: '',
-    active: true
-  });
 
   //For pays
   const [selectedSocioId, setSelectedSocioId] = useState(null);
@@ -32,7 +29,7 @@ function SocioList({ trigger }) {
         await axios.delete(`http://localhost:5050/api/socios/${id}`);
         setSocios(socios.filter(socio => socio._id !== id));
       } catch (error) {
-        console.error('Error deleting socio:', error);
+        console.error('Error eliminando el socio:', error);
         alert('Error al eliminar socio');
       }
     }
@@ -40,18 +37,13 @@ function SocioList({ trigger }) {
 
   const handleEdit = (socio) => {
     setEditingId(socio._id);
-    setEditForm({
-      name: socio.name,
-      dni: socio.dni,
-      active: socio.active
-    });
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (formData) => {
     try {
       const response = await axios.put(
         `http://localhost:5050/api/socios/${editingId}`,
-        editForm
+        formData
       );
       setSocios(socios.map(socio => 
         socio._id === editingId ? response.data : socio
@@ -77,59 +69,30 @@ function SocioList({ trigger }) {
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>DNI</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+            <th className="col-3">Nombre</th>
+            <th className="col-2">DNI</th>
+            <th className="col-2">Estado</th>
+            <th className="col-2">Clases Inscriptas</th>
+            <th className="col-3">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {socios.map((socio) => (
-            <>
-              <tr key={socio._id}>
-                {editingId === socio._id ? (
-                  <>
-                    <td>
-                      <input
-                        type="text"
-                        value={editForm.name}
-                        onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                        className="form-control"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={editForm.dni}
-                        onChange={(e) => setEditForm({...editForm, dni: e.target.value})}
-                        className="form-control"
-                      />
-                    </td>
-                    <td>
-                      <select
-                        value={editForm.active}
-                        onChange={(e) => setEditForm({...editForm, active: e.target.value === 'true'})}
-                        className="form-control"
-                      >
-                        <option value={true}>Activo</option>
-                        <option value={false}>Inactivo</option>
-                      </select>
-                    </td>
-                    <td>
-                      <button onClick={handleUpdate} className="btn btn-success btn-sm me-2">
-                        Guardar
-                      </button>
-                      <button onClick={handleCancelEdit} className="btn btn-secondary btn-sm">
-                        Cancelar
-                      </button>
-                    </td>
-                  </>
-                ) : (
-                  <>
-                    <td>{socio.name}</td>
-                    <td>{socio.dni}</td>
-                    <td>{socio.active ? 'Activo' : 'Inactivo'}</td>
-                    <td>
+            <React.Fragment key={socio._id}>
+              {editingId === socio._id ? (
+                <SocioEditForm
+                  socio={socio}
+                  onUpdate={handleUpdate}
+                  onCancel={handleCancelEdit}
+                />
+              ) : (
+                <tr>
+                  <td>{socio.name}</td>
+                  <td>{socio.dni}</td>
+                  <td>{socio.active ? 'Activo' : 'Inactivo'}</td>
+                  <td>{socio?.enrolledClasses?.length || 0} clases</td>
+                  <td>
+                    <div className="btn-group">
                       <button 
                         onClick={() => handleEdit(socio)}
                         className="btn btn-primary btn-sm me-2"
@@ -148,18 +111,18 @@ function SocioList({ trigger }) {
                       >
                         {selectedSocioId === socio._id ? 'Ocultar Pagos' : 'Ver Pagos'}
                       </button>
-                    </td>
-                  </>
-                )}
-              </tr>
+                    </div>
+                  </td>
+                </tr>
+              )}
               {selectedSocioId === socio._id && (
                 <tr>
-                  <td colSpan="4">
+                  <td colSpan="5">
                     <PaymentManager socioId={socio._id} />
                   </td>
                 </tr>
               )}
-            </>
+            </React.Fragment>
           ))}
         </tbody>
       </table>

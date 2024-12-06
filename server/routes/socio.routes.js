@@ -73,6 +73,10 @@ router.post('/:socioId/enroll/:classId', async (req, res) => {
     const socio = await Socio.findById(req.params.socioId);
     const classItem = await Class.findById(req.params.classId);
     
+    if (classItem.enrolled.length >= classItem.capacity) {
+      return res.status(400).json({ message: 'La clase esta llena' });
+    }
+
     if (!socio) {
       return res.status(404).json({ message: 'Socio no encontrado' });
     }
@@ -80,23 +84,27 @@ router.post('/:socioId/enroll/:classId', async (req, res) => {
       return res.status(404).json({ message: 'Clase no encontrada' });
     }
 
-    // Check pago
+    // Verificar pago activo y válido
     const activePay = await Pay.findOne({
       socioId: socio._id,
       status: 'active',
+      startDate: { $lte: new Date() },
       endDate: { $gte: new Date() }
     });
 
     if (!activePay) {
-      return res.status(400).json({ message: 'No se encontro pago activo' });
+      return res.status(400).json({ message: 'No se encontro pago activo vigente' });
     }
 
     if (!socio.enrolledClasses.includes(classItem._id)) {
       socio.enrolledClasses.push(classItem._id);
-      classItem.enrolledStudents.push(socio._id);
+      classItem.enrolled.push(socio._id);
       
-      await socio.save();
-      await classItem.save();
+      // Actualizar ambas entidades
+      await Promise.all([
+        socio.save(),
+        classItem.save()
+      ]);
     }
 
     res.json(socio);
