@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const paySchema = new mongoose.Schema({
     socioId: { type: mongoose.Schema.Types.ObjectId, ref: 'Socio', required: true },
-    // amount: { type: Number, required: true },
     type: {
       type: String,
       enum: ['Diario', 'Semanal', 'Quincenal', 'Mensual', 'Semestral', 'Anual'],

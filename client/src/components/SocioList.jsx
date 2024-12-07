@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import PaymentManager from './PaymentManager';
-
 import SocioEditForm from './SocioEditForm';
+import SocioActions from './SocioActions';
 
 function SocioList({ trigger }) {
   const [socios, setSocios] = useState([]);
@@ -13,6 +13,9 @@ function SocioList({ trigger }) {
 
   //For pays
   const [selectedSocioId, setSelectedSocioId] = useState(null);
+
+  //Para dropbox de clases a anotarse
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const fetchSocios = async () => {
     try {
@@ -92,26 +95,17 @@ function SocioList({ trigger }) {
                   <td>{socio.active ? 'Activo' : 'Inactivo'}</td>
                   <td>{socio?.enrolledClasses?.length || 0} clases</td>
                   <td>
-                    <div className="btn-group">
-                      <button 
-                        onClick={() => handleEdit(socio)}
-                        className="btn btn-primary btn-sm me-2"
-                      >
-                        Editar
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(socio._id)}
-                        className="btn btn-danger btn-sm me-2"
-                      >
-                        Eliminar
-                      </button>
-                      <button
-                        onClick={() => setSelectedSocioId(selectedSocioId === socio._id ? null : socio._id)}
-                        className="btn btn-info btn-sm"
-                      >
-                        {selectedSocioId === socio._id ? 'Ocultar Pagos' : 'Ver Pagos'}
-                      </button>
-                    </div>
+                    <SocioActions
+                      socio={socio}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                      onTogglePayments={(id) => setSelectedSocioId(selectedSocioId === id ? null : id)}
+                      showingPayments={selectedSocioId === socio._id}
+                      onEnrollmentComplete={() => {
+                        setRefreshTrigger(prev => prev + 1);
+                        fetchSocios();
+                      }} // Para actualizar la lista despues de una inscripcion y el dropbox con clases
+                    />
                   </td>
                 </tr>
               )}

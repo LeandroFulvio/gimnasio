@@ -1,6 +1,7 @@
 import express from 'express';
 import Socio from '../model/socio.js';
 import Class from '../model/class.js';
+import Pay from '../model/pay.js';
 
 const router = express.Router();
 
@@ -70,12 +71,10 @@ router.put('/:id', async (req, res) => {
 // POST inscribir a clase
 router.post('/:socioId/enroll/:classId', async (req, res) => {
   try {
-    const socio = await Socio.findById(req.params.socioId);
-    const classItem = await Class.findById(req.params.classId);
-    
-    if (classItem.enrolled.length >= classItem.capacity) {
-      return res.status(400).json({ message: 'La clase esta llena' });
-    }
+    const [socio, classItem] = await Promise.all([
+      Socio.findById(req.params.socioId),
+      Class.findById(req.params.classId)
+    ]);
 
     if (!socio) {
       return res.status(404).json({ message: 'Socio no encontrado' });
@@ -84,20 +83,30 @@ router.post('/:socioId/enroll/:classId', async (req, res) => {
       return res.status(404).json({ message: 'Clase no encontrada' });
     }
 
+    if (classItem.enrolled?.length >= classItem.capacity) {
+      return res.status(400).json({ message: 'La clase esta llena' });
+    }
+
     // Verificar pago activo y válido
+    const now = new Date();
     const activePay = await Pay.findOne({
       socioId: socio._id,
       status: 'active',
-      startDate: { $lte: new Date() },
-      endDate: { $gte: new Date() }
+      startDate: { $lte: now },
+      endDate: { $gte: now }
     });
 
     if (!activePay) {
       return res.status(400).json({ message: 'No se encontro pago activo vigente' });
     }
 
+    if (socio.enrolledClasses.includes(classItem._id)) {
+      return res.status(400).json({ message: 'El socio ya esta inscrito en esta clase' });
+    }
+
     if (!socio.enrolledClasses.includes(classItem._id)) {
       socio.enrolledClasses.push(classItem._id);
+      classItem.enrolled = classItem.enrolled || [];
       classItem.enrolled.push(socio._id);
       
       // Actualizar ambas entidades
@@ -107,9 +116,10 @@ router.post('/:socioId/enroll/:classId', async (req, res) => {
       ]);
     }
 
-    res.json(socio);
+    return res.json(socio);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error anotandose a la clase:', error);
+    return res.status(500).json({ message: 'Error interno del servidor' });
   }
 });
 

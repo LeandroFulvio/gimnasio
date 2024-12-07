@@ -28,7 +28,7 @@ function CreateClass({ onClassCreated }) {
 
   return (
     <div className="container mt-4">
-      <h2>Crear Nueva Clase</h2>
+      <h2>Registrar Clase</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Nombre de la Clase</label>

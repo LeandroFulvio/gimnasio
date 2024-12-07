@@ -17,5 +17,8 @@
     "final---progra-iii": "file:",
     "mongodb": "^6.10.0",
     "mongoose": "^8.8.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }
