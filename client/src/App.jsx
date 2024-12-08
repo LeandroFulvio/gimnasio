@@ -2,8 +2,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
 import NavBar from './components/Navbar';
 import Home from './Home';
-import CreateClass from './components/CreateClass';
-import ClassList from './components/ClassList';
+import CreateClass from './components/class/CreateClass';
+import ClassList from './components/class/ClassList';
 
 function App() {
   const [updateTrigger, setUpdateTrigger] = useState(0);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import PaymentManager from './PaymentManager';
+import PaymentManager from '../PaymentManager';
 import SocioEditForm from './SocioEditForm';
 import SocioActions from './SocioActions';
 

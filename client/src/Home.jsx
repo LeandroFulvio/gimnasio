@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import SocioList from './components/SocioList';
-import CreateSocio from './components/CreateSocio';
+import SocioList from './components/socio/SocioList';
+import CreateSocio from './components/socio/CreateSocio';
 
 function Home() {
   const [updateTrigger, setUpdateTrigger] = useState(0);

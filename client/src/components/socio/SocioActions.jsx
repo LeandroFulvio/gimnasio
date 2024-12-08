@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import EnrollmentSelect from './EnrollmentSelect';
+import EnrollmentSelect from '../EnrollmentSelect';
 
 function SocioActions({ 
   socio, 
