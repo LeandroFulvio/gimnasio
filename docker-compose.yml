@@ -1,0 +1,36 @@
+services:
+  mongo:
+    image: mongo
+    container_name: mongo_gimnasio
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongo_data:/data/db
+
+  server:
+    build: ./server
+    container_name: gimnasio_server
+    restart: always
+    ports:
+      - "5050:5050"
+    environment:
+      MONGO_URI: mongodb://root:root@mongo:27017/gimnasio?authSource=admin
+      PORT: 5050
+    depends_on:
+      - mongo
+
+  client:
+    build: ./client
+    container_name: gimnasio_client
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+volumes:
+  mongo_data:
