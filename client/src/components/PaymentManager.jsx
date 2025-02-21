@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import paymentService from './services/PaymentService';
 
 function PaymentManager({ socioId }) {
   const [payments, setPayments] = useState([]);
@@ -16,7 +16,7 @@ function PaymentManager({ socioId }) {
 
   const fetchPayments = async () => {
     try {
-      const response = await axios.get(`http://localhost:5050/api/payments/socio/${socioId}`);
+      const response = await paymentService.getSocioPayment(socioId);
       setPayments(response.data);
     } catch (error) {
       console.error('Error fetching payments:', error);
@@ -26,7 +26,7 @@ function PaymentManager({ socioId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5050/api/payments', {
+      const response = await paymentService.createPayment({
         ...newPayment,
         socioId
       });
@@ -46,7 +46,7 @@ function PaymentManager({ socioId }) {
   const handleDelete = async (id) => {
     if (window.confirm('¿Confirma que desea eliminar este pago?')) {
       try {
-        await axios.delete(`http://localhost:5050/api/payments/${id}`);
+        await paymentService.deletePayment(id);
         setPayments(payments.filter(payment => payment._id !== id));
       } catch (error) {
         console.error('Error deleting payment:', error);

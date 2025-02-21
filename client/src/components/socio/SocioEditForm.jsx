@@ -1,4 +1,3 @@
-// SocioEditForm.jsx
 import React, { useState, useEffect } from 'react';
 
 function SocioEditForm({ socio, onUpdate, onCancel }) {

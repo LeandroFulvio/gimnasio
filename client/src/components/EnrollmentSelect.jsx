@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
+
+import classService from './services/ClassService';
+import socioService from './services/SocioService';
 
 function EnrollmentSelect({ socioId, onEnrollmentComplete, refreshTrigger }) {
   const [classes, setClasses] = useState([]);
@@ -13,7 +15,7 @@ function EnrollmentSelect({ socioId, onEnrollmentComplete, refreshTrigger }) {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get('http://localhost:5050/api/classes');
+      const response = await classService.getAllClasses();
       setClasses(response.data);
     } catch (error) {
       console.error('Error fetching clases:', error);
@@ -28,8 +30,7 @@ function EnrollmentSelect({ socioId, onEnrollmentComplete, refreshTrigger }) {
 
     setLoading(true);
     try {
-      await axios.post(`http://localhost:5050/api/socios/${socioId}/enroll/${selectedClassId}`);
-
+      await socioService.enrollSocioInClass(socioId, selectedClassId);
       setSelectedClassId('');
       if (onEnrollmentComplete) {
         onEnrollmentComplete();

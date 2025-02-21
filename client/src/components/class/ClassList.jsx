@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import classService from '../services/ClassService';
 
 function ClassList({ trigger }) {
   const [classes, setClasses] = useState([]);
@@ -10,7 +10,7 @@ function ClassList({ trigger }) {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get('http://localhost:5050/api/classes');
+      const response = await classService.getAllClasses();
       setClasses(response.data);
 
     } catch (error) {
@@ -21,7 +21,7 @@ function ClassList({ trigger }) {
   const handleDelete = async (id) => {
     if (window.confirm('¿Confirma que desea eliminar esta clase?')) {
       try {
-        await axios.delete(`http://localhost:5050/api/classes/${id}`);
+        await classService.deleteClass(id);
         setClasses(classes.filter(classItem => classItem._id !== id));
       } catch (error) {
         console.error('Error deleting class:', error);

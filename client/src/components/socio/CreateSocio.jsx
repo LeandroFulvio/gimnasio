@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import socioService from '../services/SocioService';
 
 function CreateSocio({ onSuccess }) {
   const [formData, setFormData] = useState({
@@ -10,7 +10,7 @@ function CreateSocio({ onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5050/api/socios', formData);
+      const response = await socioService.createSocio(formData);
       setFormData({ name: '', dni: '' });
       if (onSuccess) {
         onSuccess(response.data);

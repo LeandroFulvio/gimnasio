@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 import PaymentManager from '../PaymentManager';
 import SocioEditForm from './SocioEditForm';
 import SocioActions from './SocioActions';
+
+import socioService from '../services/SocioService';
 
 function SocioList({ trigger }) {
   const [socios, setSocios] = useState([]);
@@ -19,7 +20,7 @@ function SocioList({ trigger }) {
 
   const fetchSocios = async () => {
     try {
-      const response = await axios.get('http://localhost:5050/api/socios');
+      const response = await socioService.getAllSocios();
       setSocios(response.data);
     } catch (error) {
       console.error('Error fetching socios:', error);
@@ -29,7 +30,7 @@ function SocioList({ trigger }) {
   const handleDelete = async (id) => {
     if (window.confirm('¿Confirma que desea eliminar este Socio?')) {
       try {
-        await axios.delete(`http://localhost:5050/api/socios/${id}`);
+        await socioService.deleteSocio(id);
         setSocios(socios.filter(socio => socio._id !== id));
       } catch (error) {
         console.error('Error eliminando el socio:', error);
@@ -44,10 +45,7 @@ function SocioList({ trigger }) {
 
   const handleUpdate = async (formData) => {
     try {
-      const response = await axios.put(
-        `http://localhost:5050/api/socios/${editingId}`,
-        formData
-      );
+      const response = await socioService.updateSocio(editingId, formData);
       setSocios(socios.map(socio => 
         socio._id === editingId ? response.data : socio
       ));
