@@ -55,6 +55,55 @@ function PaymentManager({ socioId }) {
     }
   };
 
+  const calculateEndDate = (startDate, type) => {
+    if (!startDate) return '';
+    
+    const date = new Date(startDate);
+    switch (type) {
+      case 'Diario':
+        return new Date(date.setDate(date.getDate() + 1)).toISOString().split('T')[0];
+      case 'Semanal':
+        return new Date(date.setDate(date.getDate() + 7)).toISOString().split('T')[0];
+      case 'Quincenal':
+        return new Date(date.setDate(date.getDate() + 15)).toISOString().split('T')[0];
+      case 'Mensual':
+        return new Date(date.setMonth(date.getMonth() + 1)).toISOString().split('T')[0];
+      case 'Semestral':
+        return new Date(date.setMonth(date.getMonth() + 6)).toISOString().split('T')[0];
+      case 'Anual':
+        return new Date(date.setFullYear(date.getFullYear() + 1)).toISOString().split('T')[0];
+      default:
+        return '';
+    }
+  };
+
+  const handleStartDateChange = (e) => {
+    const startDate = e.target.value;
+    const endDate = calculateEndDate(startDate, newPayment.type);
+    setNewPayment({
+      ...newPayment,
+      startDate,
+      endDate
+    });
+  };
+  
+  const handleTypeChange = (e) => {
+    const type = e.target.value;
+    const endDate = calculateEndDate(newPayment.startDate, type);
+    setNewPayment({
+      ...newPayment,
+      type,
+      endDate
+    });
+  };
+
+  const isPaymentActive = (payment) => {
+    const now = new Date();
+    const startDate = new Date(payment.startDate);
+    const endDate = new Date(payment.endDate);
+    return startDate <= now && endDate >= now;
+  };
+  
   return (
     <div className="container mt-4">
       <h3>Gestión de Pagos</h3>
@@ -63,7 +112,7 @@ function PaymentManager({ socioId }) {
         <div className="row">
           <div className="col-md-3">
             <select className="form-control" value={newPayment.type}
-              onChange={(e) => setNewPayment({...newPayment, type: e.target.value})} >
+              onChange={handleTypeChange} >
               <option value="Diario">Diario</option>
               <option value="Semanal">Semanal</option>
               <option value="Quincenal">Quincenal</option>
@@ -77,7 +126,7 @@ function PaymentManager({ socioId }) {
               type="date"
               className="form-control"
               value={newPayment.startDate}
-              onChange={(e) => setNewPayment({...newPayment, startDate: e.target.value})}
+              onChange={handleStartDateChange}
               placeholder="Fecha inicio"
             />
           </div>
@@ -86,7 +135,7 @@ function PaymentManager({ socioId }) {
               type="date"
               className="form-control"
               value={newPayment.endDate}
-              onChange={(e) => setNewPayment({...newPayment, endDate: e.target.value})}
+              disabled
               placeholder="Fecha fin"
             />
           </div>
@@ -114,12 +163,10 @@ function PaymentManager({ socioId }) {
               <td>{payment.type}</td>
               <td>{new Date(payment.startDate).toLocaleDateString()}</td>
               <td>{new Date(payment.endDate).toLocaleDateString()}</td>
-              <td>{payment.status === 'active' ? 'Activo' : 'Expirado'}</td>
+              <td>{isPaymentActive(payment) ? 'Activo' : 'Expirado'}</td>
               <td>
-                <button
-                  onClick={() => handleDelete(payment._id)}
-                  className="btn btn-danger btn-sm"
-                >
+                <button onClick={() => handleDelete(payment._id)}
+                  className="btn btn-danger btn-sm" >
                   Eliminar
                 </button>
               </td>

@@ -53,11 +53,12 @@ function CreateClass({ onClassCreated }) {
         <div className="mb-3">
           <label className="form-label">Horario</label>
           <input
-            type="text"
+            type="time"
             className="form-control"
             value={classForm.schedule}
             onChange={(e) => setClassForm({...classForm, schedule: e.target.value})}
             required
+            data-hours24="true"
           />
         </div>
         <div className="mb-3">
