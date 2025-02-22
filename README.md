@@ -22,7 +22,7 @@ Gaston Larriera
 
 Tener instalados los siguientes programas antes de ejecutar el proyecto:
 
-- [Node.js](https://nodejs.org/) (versión recomendada: 16.x o superior)
+- [Node.js](https://nodejs.org/) (versión recomendada: 23.x o superior)
 - [Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/) para manejar contenedores.
 
 ## Instalación y configuración
@@ -39,8 +39,8 @@ cd gimnasio
 Crea un archivo `.env` en la carpeta `server` y define las variables necesarias como:
 
 ```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/gimnasio
+PORT=5050
+MONGO_URI=mongodb://root:root@localhost:27017/gimnasio?authSource=admin
 JWT_SECRET=tu_secreto
 ```
 
@@ -78,7 +78,7 @@ Desde la carpeta `server`:
    npm run dev
    ```
 
-   El servidor estará disponible en `http://localhost:5000`.
+   El servidor estará disponible en `http://localhost:5050`.
 
 #### Cliente
 
@@ -96,7 +96,7 @@ Desde la carpeta `client`:
    npm run dev
    ```
 
-   La aplicación estará disponible en `http://localhost:5173`.
+   La aplicación estará disponible en `http://localhost:3000`.
 
 ## Despliegue completo con Docker Compose
 
@@ -115,7 +115,7 @@ Este comando construirá las imágenes necesarias y levantará los servicios def
 ### 2. Acceder a la aplicación
 
 - **Cliente**: Disponible en `http://localhost:80`.
-- **Servidor**: Disponible en `http://localhost:5000`.
+- **Servidor**: Disponible en `http://localhost:5050`.
 
 ## Otros comandos utiles docker
 

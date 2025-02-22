@@ -1,5 +1,5 @@
 # Usar imagen oficial de Node.js
-FROM node:23-alpine
+FROM node:23-alpine AS build
 
 # Definir el directorio de trabajo en el contenedor
 WORKDIR /app
@@ -16,11 +16,11 @@ COPY . .
 # Construir la aplicación con Vite
 RUN npm run build
 
-# Usar una imagen ligera para servir los archivos estáticos
+# Usa una imagen de nginx para contener la aplicacion compilada
 FROM nginx:alpine
 
-# Copiar los archivos construidos a la carpeta de Nginx
-COPY --from=0 /app/dist /usr/share/nginx/html
+# Copiar los archivos compilados a la carpeta de Nginx
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # Exponer el puerto para servir la aplicación
 EXPOSE 80
