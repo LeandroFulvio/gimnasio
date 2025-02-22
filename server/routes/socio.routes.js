@@ -123,6 +123,35 @@ router.post('/:socioId/enroll/:classId', async (req, res) => {
   }
 });
 
+// POST remover socio de una clase
+router.post('/:socioId/unenrollment/:classId', async (req, res) => {
+  try {
+    const { socioId, classId } = req.params;
+    
+    const updatedClass = await Class.findByIdAndUpdate(
+      classId,
+      { $pull: { enrolled: socioId } },
+      { new: true }
+    );
+
+    const updatedSocio = await Socio.findByIdAndUpdate(
+      socioId,
+      { $pull: { enrolledClasses: classId } },
+      { new: true }
+    );
+
+    if (!updatedClass || !updatedSocio) {
+      return res.status(404).json({ message: 'Class or Socio not found' });
+    }
+
+    res.json({ message: 'Unenrollment successful' });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Error during unenrollment', error: error.message });
+  }
+
+});
+
 // DELETE
 router.delete('/:id', async (req, res) => {
   try {

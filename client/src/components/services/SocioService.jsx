@@ -52,6 +52,18 @@ const socioService = {
         }
     },
 
+    unenrollSocioFromClass: async (socioId, classId) => {
+        try {
+            const response = await axios.post(
+                SOCIO_ENDPOINT.concat(socioId).concat(`/unenrollment/`).concat(classId)
+                , CONFIG
+            );
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
 
 }
 

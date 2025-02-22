@@ -38,6 +38,23 @@ router.get('/socio/:socioId', async (req, res) => {
     }
 });
 
+//Valida que socio tenga pago activo
+router.get('/validate/:socioId', async (req, res) => {
+  try {
+    const now = new Date();
+    const activePay = await Pay.findOne({
+      socioId: req.params.socioId,
+      status: 'active',
+      startDate: { $lte: now },
+      endDate: { $gte: now }
+    });
+
+    res.json({isValid: !!activePay});
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // POST 
 router.post('/', async (req, res) => {
     const pay = new Pay({

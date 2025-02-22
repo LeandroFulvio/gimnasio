@@ -30,6 +30,15 @@ const paymentService = {
             throw error;
         }
     },
+
+    validateActivePayment: async (socioId) => {
+        try {
+            const response = await axios.get(PAYMENT_ENDPOINT.concat(`validate/${socioId}`), CONFIG);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
     
 }
 
